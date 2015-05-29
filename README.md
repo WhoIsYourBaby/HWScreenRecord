@@ -15,9 +15,6 @@ HWScreenRecord
     [[HWScreenRecord shareInterface] stopRecording];
 结束录制
 
-# 如果需要手势支持请添加
-KTouchPointerWindow
-https://github.com/itok/KTouchPointerWindow
 # 感谢
-        kishikawakatsumi的[ScreenRecorder](git@github.com:kishikawakatsumi/ScreenRecorder.git)<br />
-        itok的https://github.com/itok/KTouchPointerWindow
+kishikawakatsumi的[ScreenRecorder](git@github.com:kishikawakatsumi/ScreenRecorder.git)
+itok的[KTouchPointerWindow](https://github.com/itok/KTouchPointerWindow)
