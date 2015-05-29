@@ -19,5 +19,5 @@ HWScreenRecord
 KTouchPointerWindow
 https://github.com/itok/KTouchPointerWindow
 # 感谢
-        kishikawakatsumi的[ScreenRecorder](git@github.com:kishikawakatsumi/ScreenRecorder.git)
+        kishikawakatsumi的[ScreenRecorder](git@github.com:kishikawakatsumi/ScreenRecorder.git)<br />
         itok的https://github.com/itok/KTouchPointerWindow
