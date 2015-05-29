@@ -2,7 +2,7 @@
 //  main.m
 //  HWScreenRecord
 //
-//  Created by cdsb on 15/5/29.
+//  Created by HalloWorld on 15/5/29.
 //  Copyright (c) 2015年 halloworld. All rights reserved.
 //
 
