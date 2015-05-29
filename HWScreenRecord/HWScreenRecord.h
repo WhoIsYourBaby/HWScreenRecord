@@ -1,5 +1,5 @@
 //
-//  HWScreenShow.h
+//  HWScreenRecord.h
 //  ScreenShow
 //
 //  Created by cdsb on 15/5/28.
@@ -8,7 +8,7 @@
 
 #import <Foundation/Foundation.h>
 
-@interface HWScreenShow : NSObject
+@interface HWScreenRecord : NSObject
 
 + (instancetype)shareInterface;
 

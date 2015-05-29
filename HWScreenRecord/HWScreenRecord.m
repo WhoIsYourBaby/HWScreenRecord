@@ -1,5 +1,5 @@
 //
-//  HWScreenShow.m
+//  HWScreenRecord.m
 //  ScreenShow
 //
 //  Created by cdsb on 15/5/28.
@@ -10,15 +10,15 @@
 @import AVFoundation;
 @import UIKit;
 
-#import "HWScreenShow.h"
+#import "HWScreenRecord.h"
 #import "AppDelegate.h"
 #import "KTouchPointerWindow.h"
 
 #define TIME_SCALE 600
 
-static HWScreenShow *sInterface = NULL;
+static HWScreenRecord *sInterface = NULL;
 
-@interface HWScreenShow () <AVCaptureAudioDataOutputSampleBufferDelegate>{
+@interface HWScreenRecord () <AVCaptureAudioDataOutputSampleBufferDelegate>{
     dispatch_queue_t mWriterQueue;
     CMTime mTimeStamp;
     BOOL mIsStart;
@@ -34,12 +34,12 @@ static HWScreenShow *sInterface = NULL;
 
 @end
 
-@implementation HWScreenShow
+@implementation HWScreenRecord
 
 
 + (instancetype)shareInterface {
     if (sInterface == NULL) {
-        sInterface = [[HWScreenShow alloc] init];
+        sInterface = [[HWScreenRecord alloc] init];
     }
     return sInterface;
 }

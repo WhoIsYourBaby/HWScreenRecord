@@ -7,7 +7,7 @@
 //
 
 #import "ViewController.h"
-#import "HWScreenShow.h"
+#import "HWScreenRecord.h"
 
 @interface ViewController ()
 
@@ -17,8 +17,8 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    [[HWScreenShow shareInterface] prepareForRecording];
-    [[HWScreenShow shareInterface] startRecording];
+    [[HWScreenRecord shareInterface] prepareForRecording];
+    [[HWScreenRecord shareInterface] startRecording];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -28,7 +28,7 @@
 
 
 - (IBAction)stopTap:(id)sender {
-    [[HWScreenShow shareInterface] stopRecording];
+    [[HWScreenRecord shareInterface] stopRecording];
 }
 
 @end

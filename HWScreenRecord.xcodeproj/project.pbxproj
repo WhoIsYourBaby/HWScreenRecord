@@ -13,7 +13,7 @@
 		AA8EBD0A1B18613500FFB342 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = AA8EBD081B18613500FFB342 /* Main.storyboard */; };
 		AA8EBD0C1B18613500FFB342 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = AA8EBD0B1B18613500FFB342 /* Images.xcassets */; };
 		AA8EBD0F1B18613500FFB342 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = AA8EBD0D1B18613500FFB342 /* LaunchScreen.xib */; };
-		AA8EBD281B18619200FFB342 /* HWScreenShow.m in Sources */ = {isa = PBXBuildFile; fileRef = AA8EBD251B18619200FFB342 /* HWScreenShow.m */; };
+		AA8EBD281B18619200FFB342 /* HWScreenRecord.m in Sources */ = {isa = PBXBuildFile; fileRef = AA8EBD251B18619200FFB342 /* HWScreenRecord.m */; };
 		AA8EBD291B18619200FFB342 /* KTouchPointerWindow.m in Sources */ = {isa = PBXBuildFile; fileRef = AA8EBD271B18619200FFB342 /* KTouchPointerWindow.m */; };
 /* End PBXBuildFile section */
 
@@ -28,8 +28,8 @@
 		AA8EBD091B18613500FFB342 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		AA8EBD0B1B18613500FFB342 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		AA8EBD0E1B18613500FFB342 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/LaunchScreen.xib; sourceTree = "<group>"; };
-		AA8EBD241B18619200FFB342 /* HWScreenShow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HWScreenShow.h; sourceTree = "<group>"; };
-		AA8EBD251B18619200FFB342 /* HWScreenShow.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HWScreenShow.m; sourceTree = "<group>"; };
+		AA8EBD241B18619200FFB342 /* HWScreenRecord.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HWScreenRecord.h; sourceTree = "<group>"; };
+		AA8EBD251B18619200FFB342 /* HWScreenRecord.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HWScreenRecord.m; sourceTree = "<group>"; };
 		AA8EBD261B18619200FFB342 /* KTouchPointerWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KTouchPointerWindow.h; sourceTree = "<group>"; };
 		AA8EBD271B18619200FFB342 /* KTouchPointerWindow.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KTouchPointerWindow.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -64,8 +64,8 @@
 		AA8EBCFD1B18613500FFB342 /* HWScreenRecord */ = {
 			isa = PBXGroup;
 			children = (
-				AA8EBD241B18619200FFB342 /* HWScreenShow.h */,
-				AA8EBD251B18619200FFB342 /* HWScreenShow.m */,
+				AA8EBD241B18619200FFB342 /* HWScreenRecord.h */,
+				AA8EBD251B18619200FFB342 /* HWScreenRecord.m */,
 				AA8EBD261B18619200FFB342 /* KTouchPointerWindow.h */,
 				AA8EBD271B18619200FFB342 /* KTouchPointerWindow.m */,
 				AA8EBD021B18613500FFB342 /* AppDelegate.h */,
@@ -161,7 +161,7 @@
 			files = (
 				AA8EBD071B18613500FFB342 /* ViewController.m in Sources */,
 				AA8EBD291B18619200FFB342 /* KTouchPointerWindow.m in Sources */,
-				AA8EBD281B18619200FFB342 /* HWScreenShow.m in Sources */,
+				AA8EBD281B18619200FFB342 /* HWScreenRecord.m in Sources */,
 				AA8EBD041B18613500FFB342 /* AppDelegate.m in Sources */,
 				AA8EBD011B18613500FFB342 /* main.m in Sources */,
 			);
