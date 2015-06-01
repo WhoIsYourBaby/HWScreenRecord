@@ -44,6 +44,9 @@ static HWScreenRecord *sInterface = NULL;
     return sInterface;
 }
 
+/**
+ *  删除Document下所有文件
+ */
 - (void)clearVideos {
     NSString *vDoc = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES)[0];
     NSArray *vSubFiles = [[NSFileManager defaultManager] subpathsAtPath:vDoc];
@@ -59,7 +62,7 @@ static HWScreenRecord *sInterface = NULL;
 {
     self = [super init];
     if (self) {
-        [self clearVideos];
+        self.mWriteToAlbum = NO;
         KTouchPointerWindowInstall();
         self.mFrameInterval = 2;
         NSString *vQueueLabel = @"com.halloworld.screenshow";
@@ -67,7 +70,6 @@ static HWScreenRecord *sInterface = NULL;
         
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(applicationDidEnterBackground:) name:UIApplicationDidEnterBackgroundNotification object:nil];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(applicationWillEnterForeground:) name:UIApplicationWillEnterForegroundNotification object:nil];
-        [self screenSize];
     }
     return self;
 }
@@ -137,6 +139,7 @@ static HWScreenRecord *sInterface = NULL;
     self.mAudioWriterInput = [AVAssetWriterInput assetWriterInputWithMediaType:AVMediaTypeAudio outputSettings:vOutputSettings];
     self.mAudioWriterInput.expectsMediaDataInRealTime = YES;
     [self.mWriter addInput:self.mAudioWriterInput];
+    
 }
 
 - (void)captureSessionNotification:(NSNotification *)aSender {
@@ -163,10 +166,12 @@ static HWScreenRecord *sInterface = NULL;
         }
         [self.mCaptureSession stopRunning];
         [self.mWriter finishWritingWithCompletionHandler:^ {
-            ALAssetsLibrary *vAL = [[ALAssetsLibrary alloc] init];
-            [vAL writeVideoAtPathToSavedPhotosAlbum:[self.mWriter outputURL] completionBlock:^(NSURL *assetURL, NSError *error) {
-                [[NSFileManager defaultManager] removeItemAtURL:[self.mWriter outputURL] error:nil];
-            }];
+            if (_mWriteToAlbum) {
+                ALAssetsLibrary *vAL = [[ALAssetsLibrary alloc] init];
+                [vAL writeVideoAtPathToSavedPhotosAlbum:[self.mWriter outputURL] completionBlock:^(NSURL *assetURL, NSError *error) {
+                    [[NSFileManager defaultManager] removeItemAtURL:[self.mWriter outputURL] error:nil];
+                }];
+            }
         }];
     });
 }

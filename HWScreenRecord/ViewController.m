@@ -18,6 +18,7 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     [[HWScreenRecord shareInterface] prepareForRecording];
+    [[HWScreenRecord shareInterface] setMWriteToAlbum:YES];
 }
 
 - (void)didReceiveMemoryWarning {
