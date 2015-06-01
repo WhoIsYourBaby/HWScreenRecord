@@ -150,8 +150,6 @@ static HWScreenRecord *sInterface = NULL;
 - (void)startRecording {
     dispatch_async(mWriterQueue, ^{
         [self.mWriter startWriting];
-//        [self.mWriter startSessionAtSourceTime:kCMTimeZero];
-        
         [self.mCaptureSession startRunning];
         
         self.mDisplayLink = [CADisplayLink displayLinkWithTarget:self selector:@selector(captureFrame:)];
@@ -184,6 +182,7 @@ static HWScreenRecord *sInterface = NULL;
 
 
 - (void)applicationWillEnterForeground:(id)sender {
+    [self stopRecording];
     NSLog(@"%s -> ", __FUNCTION__);
 }
 
