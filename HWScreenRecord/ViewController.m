@@ -18,7 +18,6 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     [[HWScreenRecord shareInterface] prepareForRecording];
-    [[HWScreenRecord shareInterface] startRecording];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -29,6 +28,10 @@
 
 - (IBAction)stopTap:(id)sender {
     [[HWScreenRecord shareInterface] stopRecording];
+}
+
+- (IBAction)startTap:(id)sender {
+    [[HWScreenRecord shareInterface] startRecording];
 }
 
 @end

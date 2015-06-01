@@ -6,9 +6,9 @@
 //  Copyright (c) 2015年 halloworld. All rights reserved.
 //
 
-@import Foundation;
 @import AVFoundation;
 @import UIKit;
+@import AssetsLibrary;
 
 #import "HWScreenRecord.h"
 #import "AppDelegate.h"
@@ -163,17 +163,19 @@ static HWScreenRecord *sInterface = NULL;
         }
         [self.mCaptureSession stopRunning];
         [self.mWriter finishWritingWithCompletionHandler:^ {
-            NSLog(@"%s -> ", __FUNCTION__);
+            ALAssetsLibrary *vAL = [[ALAssetsLibrary alloc] init];
+            [vAL writeVideoAtPathToSavedPhotosAlbum:[self.mWriter outputURL] completionBlock:^(NSURL *assetURL, NSError *error) {
+                [[NSFileManager defaultManager] removeItemAtURL:[self.mWriter outputURL] error:nil];
+            }];
         }];
     });
 }
 
-- (void)applicationDidEnterBackground {
-    [self stopRecording];
+- (void)applicationDidEnterBackground:(id)sender {
 }
 
 
-- (void)applicationWillEnterForeground {
+- (void)applicationWillEnterForeground:(id)sender {
     NSLog(@"%s -> ", __FUNCTION__);
 }
 

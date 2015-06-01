@@ -6,7 +6,7 @@
 //  Copyright (c) 2015年 halloworld. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
+@import Foundation;
 
 @interface HWScreenRecord : NSObject
 
