@@ -16,7 +16,6 @@
 
 @property BOOL mWriteToAlbum;                       //YES：写入系统相册并删除本地document下得文件；NO：写入本地Document
 
-- (void)prepareForRecording;                        //先准备，再开始录音
 - (void)startRecording;
 - (void)stopRecording;
 
