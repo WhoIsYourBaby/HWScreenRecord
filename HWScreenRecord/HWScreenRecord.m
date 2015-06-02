@@ -23,6 +23,7 @@ static HWScreenRecord *sInterface = NULL;
     dispatch_queue_t mAudioOutputQueue;
     CMTime mTimeStamp;
     BOOL mIsStart;
+    UIBackgroundTaskIdentifier mBackgroundIdentifier;
 }
 
 @property (strong, nonatomic) AVAssetWriter *mWriter;
@@ -69,8 +70,8 @@ static HWScreenRecord *sInterface = NULL;
         NSString *vQueueLabel = @"com.halloworld.screenshow";
         mWriterQueue = dispatch_queue_create([vQueueLabel UTF8String], NULL);
         
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(applicationDidEnterBackground:) name:UIApplicationDidEnterBackgroundNotification object:nil];
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(applicationWillEnterForeground:) name:UIApplicationWillEnterForegroundNotification object:nil];
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(applicationDidEnterBackground:) name:UIApplicationWillResignActiveNotification object:nil];
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(applicationWillEnterForeground:) name:UIApplicationDidBecomeActiveNotification object:nil];
     }
     return self;
 }
@@ -103,68 +104,67 @@ static HWScreenRecord *sInterface = NULL;
 }
 
 - (void)setup {
-    dispatch_async(mWriterQueue, ^{
-        NSError *vError = nil;
-        self.mWriter = [[AVAssetWriter alloc] initWithURL:[self outputFileURL] fileType:AVFileTypeQuickTimeMovie error:&vError];
-        CGSize vSize = [self screenSize];
-        
-        //Video
-        NSDictionary *outputSettings = @{AVVideoCodecKey : AVVideoCodecH264, AVVideoWidthKey : @(vSize.width), AVVideoHeightKey : @(vSize.height)};
-        self.mVideoWriterInput = [AVAssetWriterInput assetWriterInputWithMediaType:AVMediaTypeVideo outputSettings:outputSettings];
-        self.mVideoWriterInput.expectsMediaDataInRealTime = YES;
-        
-        NSDictionary *sourcePixelBufferAttributes = @{(NSString *)kCVPixelBufferPixelFormatTypeKey : @(kCVPixelFormatType_32ARGB)};
-        self.mVideoWriterAdaptor = [AVAssetWriterInputPixelBufferAdaptor assetWriterInputPixelBufferAdaptorWithAssetWriterInput:self.mVideoWriterInput
-                                                                                               sourcePixelBufferAttributes:sourcePixelBufferAttributes];
-        NSParameterAssert(self.mWriter);
-        NSParameterAssert([self.mWriter canAddInput:self.mVideoWriterInput]);
-        [self.mWriter addInput:self.mVideoWriterInput];
-        
-        //Audio
-        self.mCaptureSession = [[AVCaptureSession alloc] init];
-        
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(captureSessionNotification:) name:nil object:self.mCaptureSession];
-        
-        AVCaptureDevice *vAudioDevice = [AVCaptureDevice defaultDeviceWithMediaType:AVMediaTypeAudio];
-        AVCaptureDeviceInput *vAudioIn = [[AVCaptureDeviceInput alloc] initWithDevice:vAudioDevice error:nil];
-        if ( [self.mCaptureSession canAddInput:vAudioIn] ) {
-            [self.mCaptureSession addInput:vAudioIn];
-        }
-        
-        AVCaptureAudioDataOutput *vAudioOut = [[AVCaptureAudioDataOutput alloc] init];
-        // Put audio on its own queue to ensure that our video processing doesn't cause us to drop audio
-        mAudioOutputQueue = dispatch_queue_create( "com.apple.sample.capturepipeline.audio", DISPATCH_QUEUE_SERIAL );
-        [vAudioOut setSampleBufferDelegate:self queue:mAudioOutputQueue];
-        
-        if ( [self.mCaptureSession canAddOutput:vAudioOut] ) {
-            [self.mCaptureSession addOutput:vAudioOut];
-        }
-        self.mAudioConnection = [vAudioOut connectionWithMediaType:AVMediaTypeAudio];
-        
-        NSDictionary *vOutputSettings = [vAudioOut recommendedAudioSettingsForAssetWriterWithOutputFileType:AVFileTypeQuickTimeMovie];
-        self.mAudioWriterInput = [AVAssetWriterInput assetWriterInputWithMediaType:AVMediaTypeAudio outputSettings:vOutputSettings];
-        self.mAudioWriterInput.expectsMediaDataInRealTime = YES;
-        [self.mWriter addInput:self.mAudioWriterInput];
-    });
+    mBackgroundIdentifier = UIBackgroundTaskInvalid;
+    NSError *vError = nil;
+    self.mWriter = [[AVAssetWriter alloc] initWithURL:[self outputFileURL] fileType:AVFileTypeQuickTimeMovie error:&vError];
+    CGSize vSize = [self screenSize];
+    
+    //Video
+    NSDictionary *outputSettings = @{AVVideoCodecKey : AVVideoCodecH264, AVVideoWidthKey : @(vSize.width), AVVideoHeightKey : @(vSize.height)};
+    self.mVideoWriterInput = [AVAssetWriterInput assetWriterInputWithMediaType:AVMediaTypeVideo outputSettings:outputSettings];
+    self.mVideoWriterInput.expectsMediaDataInRealTime = YES;
+    
+    NSDictionary *sourcePixelBufferAttributes = @{(NSString *)kCVPixelBufferPixelFormatTypeKey : @(kCVPixelFormatType_32ARGB)};
+    self.mVideoWriterAdaptor = [AVAssetWriterInputPixelBufferAdaptor assetWriterInputPixelBufferAdaptorWithAssetWriterInput:self.mVideoWriterInput
+                                                                                                sourcePixelBufferAttributes:sourcePixelBufferAttributes];
+    NSParameterAssert(self.mWriter);
+    NSParameterAssert([self.mWriter canAddInput:self.mVideoWriterInput]);
+    [self.mWriter addInput:self.mVideoWriterInput];
+    
+    //Audio
+    self.mCaptureSession = [[AVCaptureSession alloc] init];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(captureSessionNotification:) name:nil object:self.mCaptureSession];
+    
+    AVCaptureDevice *vAudioDevice = [AVCaptureDevice defaultDeviceWithMediaType:AVMediaTypeAudio];
+    AVCaptureDeviceInput *vAudioIn = [[AVCaptureDeviceInput alloc] initWithDevice:vAudioDevice error:nil];
+    if ( [self.mCaptureSession canAddInput:vAudioIn] ) {
+        [self.mCaptureSession addInput:vAudioIn];
+    }
+    
+    AVCaptureAudioDataOutput *vAudioOut = [[AVCaptureAudioDataOutput alloc] init];
+    // Put audio on its own queue to ensure that our video processing doesn't cause us to drop audio
+    mAudioOutputQueue = dispatch_queue_create( "com.apple.sample.capturepipeline.audio", DISPATCH_QUEUE_SERIAL );
+    [vAudioOut setSampleBufferDelegate:self queue:mAudioOutputQueue];
+    
+    if ( [self.mCaptureSession canAddOutput:vAudioOut] ) {
+        [self.mCaptureSession addOutput:vAudioOut];
+    }
+    self.mAudioConnection = [vAudioOut connectionWithMediaType:AVMediaTypeAudio];
+    
+    NSDictionary *vOutputSettings = [vAudioOut recommendedAudioSettingsForAssetWriterWithOutputFileType:AVFileTypeQuickTimeMovie];
+    self.mAudioWriterInput = [AVAssetWriterInput assetWriterInputWithMediaType:AVMediaTypeAudio outputSettings:vOutputSettings];
+    self.mAudioWriterInput.expectsMediaDataInRealTime = YES;
+    [self.mWriter addInput:self.mAudioWriterInput];
 }
 
 
 - (void)cleanup {
-    dispatch_async(mWriterQueue, ^{
-        [[NSNotificationCenter defaultCenter] removeObserver:self name:nil object:self.mCaptureSession];
-        self.mWriter = nil;
-        self.mVideoWriterInput = nil;
-        self.mVideoWriterAdaptor = nil;
-        self.mCaptureSession = nil;
-        self.mAudioWriterInput = nil;
-        self.mAudioConnection = nil;
-        mIsStart = NO;
-    });
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:nil object:self.mCaptureSession];
+    self.mWriter = nil;
+    self.mVideoWriterInput = nil;
+    self.mVideoWriterAdaptor = nil;
+    self.mCaptureSession = nil;
+    self.mAudioWriterInput = nil;
+    self.mAudioConnection = nil;
+    mIsStart = NO;
 }
 
 
 - (void)startRecording {
-    [self setup];
+    dispatch_async(mWriterQueue, ^{
+        [self setup];
+    });
     
     dispatch_async(mWriterQueue, ^{
         [self.mWriter startWriting];
@@ -196,13 +196,15 @@ static HWScreenRecord *sInterface = NULL;
     });
 }
 
+
 - (void)applicationDidEnterBackground:(id)sender {
+    if (mIsStart) {
+        [self stopRecording];
+    }
 }
 
 
 - (void)applicationWillEnterForeground:(id)sender {
-    [self stopRecording];
-    NSLog(@"%s -> ", __FUNCTION__);
 }
 
 
@@ -247,7 +249,8 @@ static HWScreenRecord *sInterface = NULL;
            NSParameterAssert(vStatus == kCVReturnSuccess && vBuffer);
            if (vBuffer) {
                if(![self.mVideoWriterAdaptor appendPixelBuffer:vBuffer withPresentationTime:mTimeStamp]) {
-                   [self stopRecording];
+                   NSLog(@"%s -> appendPixelBuffer faild", __FUNCTION__);
+                   
                }
                CVPixelBufferRelease(vBuffer);
            }
